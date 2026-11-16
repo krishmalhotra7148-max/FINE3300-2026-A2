@@ -82,11 +82,7 @@ Run both programs from inside the repository folder so they can find `cpi.csv`.
 The graph shows two measures:
 
 - **Consumer Price Index (blue line, left axis):** the price level of the CPI basket, indexed so that **2002 = 100**. The dotted gray line marks this base level.
-- **Year-over-year inflation rate (orange line, right axis):** the percentage change in the CPI compared with the same month one year earlier:
-
-$$
-\text{Inflation Rate}_t = \left(\frac{CPI_t}{CPI_{t-12}} - 1\right) \times 100
-$$
+- **Year-over-year inflation rate (orange line, right axis):** the percentage change in the CPI compared with the same month one year earlier (formula under [Formulas](#formulas)).
 
 Two vertical axes are used because the CPI level and the inflation rate have different units and scales.
 
@@ -117,35 +113,18 @@ The calculator compares the purchasing power of Canadian dollars between two spe
 - Validates every input and asks again instead of crashing.
 - Works in both directions: the later date can be entered first to see what a price was worth in the past.
 
-### Methodology
+### Formulas
 
-**Equivalent price**
+| Result | Formula |
+|---|---|
+| New price | price × (CPI₂ ÷ CPI₁) |
+| Percent change | (new price − price) ÷ price × 100 |
+| Number of months | (year₂ − year₁) × 12 + (month₂ − month₁) |
+| Number of years | months ÷ 12 |
+| Annual rate of change | ((CPI₂ ÷ CPI₁)^(1 ÷ years) − 1) × 100 |
+| Year-over-year inflation (graph) | (CPIₜ ÷ CPIₜ₋₁₂ − 1) × 100 |
 
-$$
-P_2 = P_1 \times \frac{CPI_2}{CPI_1}
-$$
-
-where $P_1$ is the original amount, $P_2$ is the inflation-adjusted amount, $CPI_1$ is the CPI in the first month, and $CPI_2$ is the CPI in the second month.
-
-**Cumulative percentage change**
-
-$$
-\%\ \text{Change} = \left(\frac{CPI_2}{CPI_1} - 1\right) \times 100
-$$
-
-**Number of years**
-
-$$
-n = \frac{\text{months between the two dates}}{12}
-$$
-
-**Annual rate of change** (the constant yearly rate that produces the same total change)
-
-$$
-r = \left[\left(\frac{CPI_2}{CPI_1}\right)^{1/n} - 1\right] \times 100
-$$
-
-When both dates are the same, the annual rate is reported as 0% to avoid dividing by zero.
+CPI₁ and CPI₂ are the CPI in the first and second month. If both dates are the same, the annual rate is 0%.
 
 ### Sample Output
 
