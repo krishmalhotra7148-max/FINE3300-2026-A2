@@ -1,105 +1,271 @@
-# FINE3300-2026-A2
 
-FINE 3300 (Python for Finance Professionals) – Assignment 2, Part B: Consumer Price Index
+# Inflation Analysis & Calculator
 
-## Introduction
+**FINE 3300 — Python for Finance Professionals | Assignment 2, Part B**
 
-The Consumer Price Index (CPI) measures the price level of a basket of goods and services bought by Canadian households. Statistics Canada publishes it every month, and changes in the CPI are used to measure inflation.
+This project analyzes historical Canadian inflation using monthly Consumer Price Index (CPI) data and develops an interactive Python inflation calculator. It combines financial data analysis, visualization, and practical calculations to illustrate how the purchasing power of money changes over time.
 
-This project uses the monthly CPI data behind the Bank of Canada's [Inflation Calculator](https://www.bankofcanada.ca/rates/related/inflation-calculator/) (January 1914 to September 2026, 2002 = 100) to do three things:
+The analysis uses monthly Canadian CPI data from **January 1914 to September 2026**, sourced from the Bank of Canada and originally collected by Statistics Canada.
 
-1. Read the data into a Pandas data frame and graph the CPI together with its annual percentage change.
-2. Build an enhanced version of the Bank of Canada Inflation Calculator. The Bank of Canada's calculator only takes a year, even though the data is monthly, so this calculator takes a month and year for each period and validates every input.
+## Project Overview
 
-## Files
+The repository contains two Python programs:
+
+1. **CPI Visualization (`cpi_graph.py`)**  
+   Analyzes historical CPI data, calculates year-over-year inflation rates, and visualizes changes in Canadian consumer prices.
+
+2. **Enhanced Inflation Calculator (`InflationCalculator.py`)**  
+   An interactive calculator that converts monetary amounts between two selected months using historical CPI values. It also calculates cumulative inflation and annualized rates of change.
+
+## Repository Structure
 
 | File | Description |
-|---|---|
-| `cpi.csv` | Monthly Total CPI data downloaded from the Bank of Canada Inflation Calculator page (CSV format). |
-| `cpi_graph.py` | Reads the data, calculates the annual percentage change, and creates the graph. |
-| `cpi_graph.png` | The graph saved by `cpi_graph.py`. |
-| `InflationCalculator.py` | Enhanced inflation calculator. Inputs: price, first date, second date (month and year). Uses the monthly CPI. |
+|------|-------------|
+| `cpi.csv` | Historical monthly Canadian CPI dataset |
+| `cpi_graph.py` | Python script for CPI analysis and visualization |
+| `cpi_graph.png` | Generated CPI and inflation chart |
+| `InflationCalculator.py` | Interactive monthly inflation calculator |
+| `README.md` | Project documentation and instructions |
 
-## How to run the project
+## Getting Started
 
-You need Python 3 with NumPy, Pandas, and Matplotlib.
+### Requirements
 
+Ensure Python 3 is installed along with the following libraries:
+
+- pandas
+- NumPy
+- Matplotlib
+
+Install the required packages using:
+
+```bash
+python -m pip install pandas numpy matplotlib
 ```
+
+### Clone the Repository
+
+```bash
 git clone https://github.com/krishmalhotra7148-max/FINE3300-2026-A2.git
 cd FINE3300-2026-A2
-pip install numpy pandas matplotlib
 ```
 
-Then run either program from inside the project folder (both read `cpi.csv` from the same folder):
+### Run the CPI Visualization
 
-```
+```bash
 python cpi_graph.py
+```
+
+This program:
+- Loads the historical CPI dataset.
+- Calculates year-over-year inflation.
+- Produces a dual-axis visualization.
+- Saves the resulting figure as `cpi_graph.png`.
+
+### Run the Inflation Calculator
+
+```bash
 python InflationCalculator.py
 ```
 
-To use newer data, download the latest CSV from the Bank of Canada Inflation Calculator page and save it as `cpi.csv`.
+The calculator prompts users to enter a monetary amount and two dates in `YYYY-MM` format.
 
-## CPI graph
+Run both programs from the repository folder so they can access `cpi.csv`.
 
-![Consumer Price Index over time with annual percentage change](cpi_graph.png)
+---
 
-The blue line is the CPI (left axis), the orange line is the annual percentage change (right axis, each month compared with the same month a year earlier), and the dotted line is the base level of 100 (2002 = 100).
+## Part 1: Historical Canadian CPI Analysis
 
-**Commentary**
+### CPI Visualization
 
-- **The CPI was almost flat for its first 50 years, then took off.** It started at 6.0 in 1914 and has reached 170.0 in September 2026, but most of that increase happened after 1970. The CPI line crosses the base level in 2002, the base year.
-- **The most volatile period was right after World War I.** Annual inflation peaked at 21.6% in June 1920 and was followed by the largest drop in the data, -17.8% in mid-1921. Prices fell again during the Great Depression in the early 1930s.
-- **There was another spike after World War II**, reaching 17.5% in February 1948.
-- **The 1970s and early 1980s were the longest stretch of high inflation.** The annual change averaged about 7.8% from 1970 to 1984 and peaked at 12.9% in July 1981. This is where the CPI line is steepest.
-- **From 1992 to 2020 inflation was low and stable**, averaging about 1.8% a year. The only negative reading in this period was in 2009 (-0.9% in July) after the financial crisis.
-- **The post-pandemic spike stands out**: 8.1% in June 2022, the highest reading since the early 1980s. The latest value in the data is 3.1% (September 2026).
+![Canadian CPI and Annual Inflation Rate](cpi_graph.png)
 
-## Calculator
+The visualization displays two measures of Canadian inflation:
 
-The calculator uses the same formulas as the Bank of Canada:
+**Consumer Price Index (CPI)**
 
-- New price = price × (CPI in second period ÷ CPI in first period)
-- Percent change = (CPI in second period ÷ CPI in first period − 1) × 100
-- Annual rate of change = ((CPI in second period ÷ CPI in first period)^(1 ÷ number of years) − 1) × 100
-- Number of years = number of months between the two dates ÷ 12
+The blue line represents the CPI level, indexed to a base of **2002 = 100**.
 
-### Sample output
+**Year-over-Year Inflation Rate**
 
-```
-Enhanced Inflation Calculator (monthly CPI, January 1914 to September 2026)
+The orange line represents the percentage change in CPI relative to the same month of the previous year.
+
+Annual inflation is calculated as:
+
+\[
+\text{Inflation Rate}_t =
+\left(\frac{CPI_t}{CPI_{t-12}}-1\right)\times100
+\]
+
+The chart uses two vertical axes because the CPI level and the annual inflation rate have different units and scales.
+
+---
+
+## Part 2: Enhanced Inflation Calculator
+
+### Purpose
+
+The Enhanced Inflation Calculator allows users to compare the purchasing power of Canadian dollars between two specific months.
+
+Rather than restricting comparisons to entire years, the program uses monthly CPI observations to provide more precise historical comparisons.
+
+### Calculator Features
+
+- Accepts any positive monetary amount.
+- Supports monthly dates in `YYYY-MM` format.
+- Allows comparisons between January 1914 and September 2026.
+- Calculates the CPI-adjusted equivalent price.
+- Reports the cumulative percentage change.
+- Calculates the annualized rate of price change.
+- Validates user inputs and handles invalid entries.
+- Supports both forward and backward date comparisons.
+
+### Methodology
+
+The calculator uses the CPI ratio between two periods to determine the equivalent monetary value.
+
+**Equivalent Price**
+
+\[
+P_2=P_1\times\frac{CPI_2}{CPI_1}
+\]
+
+Where:
+
+- \(P_1\) = Original monetary amount
+- \(P_2\) = Inflation-adjusted monetary amount
+- \(CPI_1\) = CPI in the starting month
+- \(CPI_2\) = CPI in the comparison month
+
+**Cumulative Percentage Change**
+
+\[
+\%\text{ Change}=
+\left(\frac{CPI_2}{CPI_1}-1\right)\times100
+\]
+
+**Annualized Rate of Change**
+
+\[
+r=\left[
+\left(\frac{CPI_2}{CPI_1}\right)^{1/n}-1
+\right]\times100
+\]
+
+Where \(n\) represents the number of months between the selected dates divided by 12.
+
+For identical dates, the calculator reports an annualized change of 0% to avoid division by zero.
+
+### Example Calculation
+
+The following example compares **$100 in March 2000** with its equivalent value in **September 2026**.
+
+```text
+Enhanced Inflation Calculator
+Monthly CPI: January 1914 - September 2026
+
 Enter the price: $100
 Enter the first date (YYYY-MM): 2000-03
 Enter the second date (YYYY-MM): 2026-09
+
 --------------------------------------------------
 $100.00 CAD in March 2000 = $179.32 CAD in September 2026
 --------------------------------------------------
+
 Percent change:        79.32%
 Number of years:       26.50
 Annual rate of change: 2.23%
+
 CPI in March 2000: 94.8
 CPI in September 2026: 170.0
 ```
 
-### Input validation
+### Interpretation
 
-The calculator keeps asking until every input is valid:
+Based on the CPI data, a basket of goods and services costing **$100 in March 2000** would cost approximately **$179.32 in September 2026** if its price moved in line with the national CPI.
 
-```
+This represents:
+
+- **79.32%** cumulative price growth.
+- Approximately **2.23%** annualized inflation.
+- A substantial reduction in the purchasing power of a fixed nominal dollar amount over the comparison period.
+
+### Input Validation
+
+The program includes validation to improve usability and prevent invalid calculations.
+
+It checks that:
+
+1. The monetary amount is positive and numeric.
+2. Dates follow the `YYYY-MM` format.
+3. Entered months are valid calendar months.
+4. Both dates fall within the available dataset.
+5. Invalid inputs are corrected before calculations proceed.
+
+For example:
+
+```text
 Enter the price: $abc
-  Please enter a number, e.g. 100 or 1,250.50
+Please enter a number, e.g. 100 or 1,250.50
+
 Enter the price: $100
+
 Enter the first date (YYYY-MM): March 2020
-  Please use the format YYYY-MM, e.g. 2020-03
-Enter the first date (YYYY-MM): 1913-12
-  The data only covers 1914-01 to 2026-09.
+Please use the format YYYY-MM, e.g. 2020-03
+
 Enter the first date (YYYY-MM): 2020-03
 ```
 
-- The price must be a number greater than 0 (commas and a dollar sign are accepted).
-- Dates must be in `YYYY-MM` format with a real month.
-- Dates must be inside the data set (January 1914 to September 2026).
-- The dates can be entered in either order; entering the later date first shows what a price today was worth in the past.
+---
 
-## Data source
+## Data Source and Methodology
 
-Bank of Canada, Inflation Calculator (Total CPI, monthly). Original source: Statistics Canada, Consumer Price Indexes for Canada, Monthly.
+**Primary Source:** [Bank of Canada — Inflation Calculator](https://www.bankofcanada.ca/rates/related/inflation-calculator/)
+
+**Original Data Provider:** Statistics Canada
+
+**Dataset:** Canadian Total Consumer Price Index, Monthly
+
+**Base Year:** 2002 = 100
+
+**Period Covered:** January 1914 – September 2026
+
+### Data Processing
+
+The Python programs use `pandas` to import, clean, and process the CPI dataset.
+
+The CSV contains introductory metadata, which is skipped during import.
+
+```python
+import pandas as pd
+
+data_frame = pd.read_csv("cpi.csv", skiprows=8)
+```
+
+Annual inflation is calculated using a 12-month percentage change:
+
+```python
+data_frame["Annual Pct Change"] = (
+    data_frame["CPI"].pct_change(periods=12) * 100
+)
+```
+
+This compares each month's CPI value with the corresponding month one year earlier.
+
+---
+
+## Conclusion
+
+This project demonstrates how Python can be applied to financial data analysis through historical inflation measurement, visualization, and interactive calculations.
+
+The CPI visualization illustrates long-term price changes and periods of inflation volatility in Canada.
+
+The Enhanced Inflation Calculator extends the analysis by allowing users to quantify changes in purchasing power between specific months.
+
+Together, these tools demonstrate practical applications of Python, pandas, and Matplotlib for working with economic and financial data.
+
+---
+
+**Course:** FINE 3300 — Python for Finance Professionals  
+**Assignment:** Assignment 2, Part B  
+**Author:** Krish Malhotra
