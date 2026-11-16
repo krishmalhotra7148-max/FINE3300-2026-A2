@@ -8,14 +8,11 @@ data_frame = pd.read_csv('cpi.csv', skiprows=8)
 data_frame = data_frame.rename(columns={'date': 'Date', 'STATIC_INFLATIONCALC': 'CPI'})
 data_frame['Date'] = pd.to_datetime(data_frame['Date'])
 
-# 2. Annual CPI (average of the 12 months in each year)
+# Use the date as the index so a CPI value can be looked up by date
+monthly_cpi = data_frame.set_index('Date')['CPI']
 
-
-data_frame['Year'] = data_frame['Date'].dt.year
-annual_cpi = data_frame.groupby('Year')['CPI'].apply(np.mean)
-
-first_year = annual_cpi.index.min()
-last_year = annual_cpi.index.max()
+first_date = monthly_cpi.index.min()
+last_date = monthly_cpi.index.max()
 
 # 3. Functions that keep asking until the user gives a valid value
 def get_price():
@@ -31,49 +28,62 @@ def get_price():
             continue
         return price
 
-
-def get_year(prompt):
+def get_date(prompt):
     while True:
         text = input(prompt).strip()
+
+        # Validate the format: must be a year and a month, e.g. 2020-03
         try:
-            year = int(text)
+            date = pd.to_datetime(text, format='%Y-%m')
         except ValueError:
-            print('  Please enter a year as a whole number, e.g. 2000')
+            print('  Please use the format YYYY-MM, e.g. 2020-03')
             continue
-        if year < first_year or year > last_year:
-            print(f'  The data only covers {first_year} to {last_year}.')
+
+        # Make sure the date is inside the data set
+        if date < first_date or date > last_date:
+            print(f'  The data only covers {first_date:%Y-%m} to {last_date:%Y-%m}.')
             continue
-        return year
+        return date
 
 
-# 4. Get inputs from the user
-print(f'Inflation Calculator (CPI data from {first_year} to {last_year})')
+# 3. Get inputs from the user
+print(f'Enhanced Inflation Calculator (monthly CPI, {first_date:%B %Y} to {last_date:%B %Y})')
 price = get_price()
-year1 = get_year('Enter the starting year: ')
-year2 = get_year('Enter the ending year: ')
+date1 = get_date('Enter the first date (YYYY-MM): ')
+date2 = get_date('Enter the second date (YYYY-MM): ')
 
-# 5. Look up CPI for each year
-cpi1 = annual_cpi.loc[year1]
-cpi2 = annual_cpi.loc[year2]
+# 4. Extract the month and year from each date
+year1, month1 = date1.year, date1.month
+year2, month2 = date2.year, date2.month
+
+# 5. Look up the CPI for each month
+cpi1 = monthly_cpi.loc[date1]
+cpi2 = monthly_cpi.loc[date2]
 
 # 6. Calculations
 new_price = price * cpi2 / cpi1
 pct_change = (cpi2 / cpi1 - 1) * 100
-n_years = abs(year2 - year1)
+
+# Number of years between the two dates (months count as a fraction of a year)
+n_months = (year2 - year1) * 12 + (month2 - month1)
+n_years = n_months / 12
 
 # The annual rate is the constant yearly rate that gives the same total change.
-# It is 0 when both years are the same (nothing to annualize).
-if n_years == 0:
+# It is 0 when both dates are the same (nothing to annualize).
+if n_months == 0:
     annual_rate = 0.0
 else:
-    annual_rate = (np.power(cpi2 / cpi1, 1 / (year2 - year1)) - 1) * 100
+    annual_rate = (np.power(cpi2 / cpi1, 1 / n_years) - 1) * 100
 
 # 7. Results
+label1 = f'{date1:%B %Y}'
+label2 = f'{date2:%B %Y}'
+
 print(50 * '-')
-print(f'${price:,.2f} CAD in {year1} = ${new_price:,.2f} CAD in {year2}')
+print(f'${price:,.2f} CAD in {label1} = ${new_price:,.2f} CAD in {label2}')
 print(50 * '-')
 print(f'Percent change:        {pct_change:,.2f}%')
-print(f'Number of years:       {n_years}')
+print(f'Number of years:       {np.abs(n_years):.2f}')
 print(f'Annual rate of change: {annual_rate:.2f}%')
-print(f'CPI in {year1}:           {cpi1:.1f}')
-print(f'CPI in {year2}:           {cpi2:.1f}')
+print(f'CPI in {label1}: {cpi1:.1f}')
+print(f'CPI in {label2}: {cpi2:.1f}')
