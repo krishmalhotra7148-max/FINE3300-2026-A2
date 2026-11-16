@@ -5,18 +5,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 # 1. Load the data
 # The Bank of Canada CSV has 8 lines of info text at the top
-data_frame = pd.read_csv('cpi.csv.csv', skiprows=8)
+data_frame = pd.read_csv('cpi.csv', skiprows=8)
 
 data_frame = data_frame.rename(columns={'date': 'Date', 'STATIC_INFLATIONCALC': 'CPI'})
 
-# Convert dates from text to real dates, then pull out the year
+# Convert dates from text to real dates
 data_frame['Date'] = pd.to_datetime(data_frame['Date'])
 
 data_frame['Annual Pct Change'] = data_frame['CPI'].pct_change(periods=12) * 100
-data_frame['Annual Pct Change'] = data_frame['Annual Pct Change'].round(2)
+data_frame['Annual Pct Change'] = np.round(data_frame['Annual Pct Change'], 2)
 
 print(data_frame.tail(5))
-
+# Plot the CPI on the left axis
 fig, ax = plt.subplots(figsize=(10, 5), layout='constrained')
 
 ax.plot(data_frame['Date'], data_frame['CPI'], color='blue', label='CPI')
@@ -32,7 +32,7 @@ ax.axhline(y=100, linestyle=':', color='gray', label='Base level (2002 = 100)')
 ax2 = ax.twinx()
 ax2.plot(data_frame['Date'], data_frame['Annual Pct Change'], color='orange', label='Annual Percentage Change (%)', linewidth=0.8)
 ax2.set_ylabel('Annual Percentage Change (%)')
-
+# One legend for both axes, then save the graph as a png
 lines1, labels1 = ax.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax.legend(lines1 + lines2, labels1 + labels2, loc='lower right')
